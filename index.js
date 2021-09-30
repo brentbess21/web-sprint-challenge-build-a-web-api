@@ -13,4 +13,10 @@ I need this code, but don't know where, perhaps should make some middleware, don
 Pull your server into this file and start it!
 */
 
-console.log("hello there!");
+const server = require('./api/server');
+
+const port = 3000; 
+
+server.listen(port, ()=> {
+    console.log(`*** Listening on localhost:${port} ***`)
+})

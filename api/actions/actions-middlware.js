@@ -1,5 +1,6 @@
 // add middlewares here related to actions
 const Action = require('./actions-model')
+const yup = require('yup')
 
 async function checkActionId (req, res, next) {
     try {
@@ -16,7 +17,27 @@ async function checkActionId (req, res, next) {
     }
 }
 
+const actionsSchema = yup.object().shape({
+    notes: yup.string().required("Notes are required"),
+    description: yup.string().required("A description is required"),
+    project_id: yup.number().required("The project ID is required"),
+    completed: yup.bool().required('Completed status is required')
+})
+
+async function actionValidation (req, res, next) {
+    try {
+        const validated = await actionsSchema.validate(
+          req.body,
+          { strict: false, stripUnknown: true }
+        )
+        req.body = validated
+        next()
+      } catch (err) {
+        next({ status: 400, message: err.message })
+      }
+}
 
 module.exports = {
-    checkActionId
+    checkActionId,
+    actionValidation
 }

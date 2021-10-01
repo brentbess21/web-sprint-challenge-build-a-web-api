@@ -1,12 +1,9 @@
-// Write your "actions" router here!
 const express = require('express');
+const { checkActionId, actionValidation } = require('./actions-middlware')
+const Action = require('./actions-model');
 const router = express.Router();
 
-const Action = require('./actions-model');
-const { checkActionId, actionValidation } = require('./actions-middlware')
-
 //GET endpoints
-
 router.get('/', async (req, res, next)=> {
     try{
         const actions = await Action.get()
@@ -20,9 +17,7 @@ router.get('/:id', checkActionId, async (req, res)=> {
     res.status(200).json(req.action)
 })
 
-
 //POST endpoint
-
 router.post('/', actionValidation, async (req, res, next)=> {
     try{
         const newAction = await Action.insert(req.body)
@@ -33,7 +28,6 @@ router.post('/', actionValidation, async (req, res, next)=> {
 })
 
 //PUT endpoint
-
 router.put('/:id', checkActionId, actionValidation, async (req, res, next)=> {
     try{
         const { id } = req.params;
@@ -45,7 +39,6 @@ router.put('/:id', checkActionId, actionValidation, async (req, res, next)=> {
 })
 
 //DELETE endpoint 
-
 router.delete('/:id', checkActionId, async (req, res, next)=> {
     try {
         const { id } = req.params;
@@ -55,4 +48,5 @@ router.delete('/:id', checkActionId, async (req, res, next)=> {
         next(err)
     }
 })
+
 module.exports = router;

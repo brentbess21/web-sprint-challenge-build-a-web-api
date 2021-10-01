@@ -39,4 +39,23 @@ router.post('/', async (req, res, next)=> {
     }
 })
 
+//PUT endpoint 
+
+router.put('/:id', checkProjectId, async (req, res, next)=> {
+    try{
+        const { id } = req.params;
+        const { name, description } = req.body;
+        const updatedProject = Project.update(id, req.body);
+        if (!name || !description) {
+            res.status(400).json({
+                message: "A name and description are required"
+            })
+        } else {
+            res.status(200).json(updatedProject)
+        }
+    } catch (err) {
+        next(err)
+    }
+})
+
 module.exports = router;

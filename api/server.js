@@ -2,6 +2,7 @@ const express = require('express');
 const server = express();
 
 const projectsRouter = require('./projects/projects-router');
+const actionsRouter = require('./actions/actions-router');
 const { logger, errorHandling } = require('./projects/projects-middleware');
 
 // Configure your server here
@@ -12,6 +13,7 @@ const { logger, errorHandling } = require('./projects/projects-middleware');
 server.use(express.json());
 
 server.use('/api/projects', logger, projectsRouter);
+server.use('/api/actions', logger, actionsRouter);
 
 
 server.use(errorHandling);

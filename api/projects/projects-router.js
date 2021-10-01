@@ -2,8 +2,9 @@
 const express = require('express')
 const router = express.Router()
 
+
 const Project = require('./projects-model')
-const { checkProjectId } = require('./projects-middleware')
+const { checkProjectId, projectValidation } = require('./projects-middleware')
 
 //GET endpoints
 router.get('/', async (req, res, next)=> {
@@ -21,19 +22,11 @@ router.get('/:id', checkProjectId, async (req, res)=> {
 
 //POST endpoint
 
-router.post('/', async (req, res, next)=> {
+router.post('/', projectValidation, async (req, res, next)=> {
     try {
-        const { name, description } = req.body;
         const newProject = await Project.insert(req.body)
-
-        if(name || description) {
-            res.status(201).json(newProject)
-            
-        } else {
-            res.status(400).json({
-                message: "Please provide a name and description"
-            })
-        }
+        res.status(201).json(newProject)
+        
     } catch (err){
         next(err)
     }
@@ -41,18 +34,12 @@ router.post('/', async (req, res, next)=> {
 
 //PUT endpoint 
 
-router.put('/:id', checkProjectId, async (req, res, next)=> {
+router.put('/:id', checkProjectId, projectValidation, async (req, res, next)=> {
     try{
         const { id } = req.params;
-        const { name, description } = req.body;
-        const updatedProject = Project.update(id, req.body);
-        if (!name || !description) {
-            res.status(400).json({
-                message: "A name and description are required"
-            })
-        } else {
-            res.status(200).json(updatedProject)
-        }
+        const updatedProject = await Project.update(id, req.body);
+        res.status(200).json(updatedProject)
+        
     } catch (err) {
         next(err)
     }

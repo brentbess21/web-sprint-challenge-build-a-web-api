@@ -1,4 +1,5 @@
 // add middlewares here related to projects
+const yup = require('yup')
 const Project = require('./projects-model');
 
 
@@ -13,11 +14,10 @@ function logger (req, res, next) {
         const { id } = req.params
         const possibleProject = await Project.get(id)
         if (!possibleProject) {
-            res.status(404).json({
-                message: "Project with that ID not found"
-            })
+            next({status: 404, message: "Project with that ID not found"})
         } else {
-            res.status(200).json(possibleProject)
+            req.project = possibleProject
+            next()
         }
       } catch (err) {
         next(err)
@@ -33,8 +33,29 @@ function logger (req, res, next) {
   }
 
 
+  const projectSchema = yup.object().shape({
+    name: yup.string().required("name is required"),
+    description: yup.string().required('description is required'),
+    completed: yup.bool().required('completed status is required')  
+  })
+
+  async function projectValidation (req, res, next) {
+    try {
+        const validated = await projectSchema.validate(
+          req.body,
+          { strict: false, stripUnknown: true }
+        )
+        req.body = validated
+        next()
+      } catch (err) {
+        next({ status: 400, message: err.message })
+      }
+  }
+
+
   module.exports = {
       logger,
       checkProjectId,
       errorHandling,
+      projectValidation
   }

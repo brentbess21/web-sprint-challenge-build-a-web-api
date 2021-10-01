@@ -3,6 +3,9 @@ const express = require('express');
 const router = express.Router();
 
 const Action = require('./actions-model');
+const { checkActionId } = require('./actions-middlware')
+
+//GET endpoints
 
 router.get('/', async (req, res, next)=> {
     try{
@@ -11,6 +14,10 @@ router.get('/', async (req, res, next)=> {
     } catch (err) {
         next(err)
     }
+})
+
+router.get('/:id', checkActionId, async (req, res)=> {
+    res.status(200).json(req.action)
 })
 
 

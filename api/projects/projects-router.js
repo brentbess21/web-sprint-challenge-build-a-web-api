@@ -16,7 +16,7 @@ router.get('/', async (req, res, next)=> {
     }
 })
 
-router.get('/:id', checkProjectId, async (req, res)=> {
+router.get('/:id', checkProjectId, (req, res)=> {
     res.status(200).json(req.project)
 })
 

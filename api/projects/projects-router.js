@@ -3,6 +3,7 @@ const express = require('express')
 const router = express.Router()
 
 const Project = require('./projects-model')
+const { checkProjectId } = require('./projects-middleware')
 
 router.get('/', async (req, res, next)=> {
     try{
@@ -13,20 +14,8 @@ router.get('/', async (req, res, next)=> {
     }
 })
 
-router.get('/:id', async (req, res, next)=> {
-    try {
-        const { id } = req.params
-        const correctProject = await Project.get(id)
-        if(!correctProject){
-            res.status(404).json({
-                message: "project not found"
-            })
-        } else {
-            res.status(200).json(correctProject)
-        }
-    } catch (err) {
-        next(err)
-    }
+router.get('/:id', checkProjectId, async (req, res)=> {
+    res.status(200).json(req.project)
 })
 
 module.exports = router;
